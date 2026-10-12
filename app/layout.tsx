@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Link from "next/link";
+import Header from "./components/header";
+import Footer from "./components/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,14 +27,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full " suppressHydrationWarning>
         <div className="mx-auto max-w-7xl bg-white min-h-dvh shadow-lg flex flex-col border-x border-gray-200">
-          <nav className="flex justify-end items-center gap-4 w-full mb-4 p-4 border-b border-gray-200">
-            <Link href="/">Home</Link>
-            <Link href="/about">About</Link>
-            <Link href="/contact">Contact</Link>
-          </nav>
+
+          <Header />
           <main className="flex-1 p-4">
             {children}
           </main>
+          <Footer />
         </div>
       </body>
     </html>
