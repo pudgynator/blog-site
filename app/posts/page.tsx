@@ -1,6 +1,7 @@
 
 import Link from 'next/link';
 import React, { Suspense } from 'react'
+import Loading from '../components/loading'
 
 interface Post {
   id: number;
@@ -33,11 +34,11 @@ const Posts = async () => {
 
 const PostsPage = () => {
   return (
-    <div >
+    <div>
       <section className="flex flex-col gap-4">
           <h1 className="text-center text-xl font-bold sm:text-3xl ">Recent Posts</h1>
           <p className="text-gray-600">This is the recent posts page</p>
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<Loading />}>
             <Posts />
           </Suspense>
       </section>
