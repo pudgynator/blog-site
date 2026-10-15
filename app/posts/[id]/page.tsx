@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 import Loading from '../../components/loading'
+import { prisma } from '../../../prisma/client'
 
 interface Post {
   id: number
@@ -11,15 +12,13 @@ interface Post {
 
 async function PostDetails({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`)
+  const post: Post | null = await prisma.post.findUnique({
+    where: {
+      id: parseInt(id)
+    }
+  })
 
-  if (!response.ok) {
-    notFound()
-  }
-
-  const post: Post = await response.json()
-
-  if (!post.id) {
+  if (!post) {
     notFound()
   }
 

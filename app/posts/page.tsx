@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import React, { Suspense } from 'react'
 import Loading from '../components/loading'
+import { prisma } from '../../prisma/client'
 
 interface Post {
   id: number;
@@ -10,8 +11,7 @@ interface Post {
 }
 
 const Posts = async () => {
-  const response = await fetch('https://jsonplaceholder.typicode.com/posts');
-  const posts: Post[] = await response.json();
+  const posts = await prisma.post.findMany();
 
   return (
     <ul className="space-y-4">
