@@ -1,8 +1,28 @@
 import Link from 'next/link';
-import React, { Suspense } from 'react'
+import { Suspense } from 'react'
+import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
 import Loading from '../components/loading'
 import { prisma } from '../../prisma/client'
 import { Post } from '@/types/post';
+
+async function createPost(formData: FormData) {
+  'use server'
+
+  const title = String(formData.get('title') ?? '').trim()
+  const body = String(formData.get('body') ?? '').trim()
+
+  if (!title || !body) {
+    return
+  }
+
+  await prisma.post.create({
+    data: { title, body },
+  })
+
+  revalidatePath('/posts')
+  redirect('/posts')
+}
 
 const Posts = async () => {
   const posts = await prisma.post.findMany();
@@ -29,9 +49,9 @@ const Posts = async () => {
   )
 }
 
-const CreatePostForm = async () => {
+const CreatePostForm = () => {
   return (
-    <form className="flex flex-col gap-4 rounded-xl border border-taupe-200 bg-taupe-50 p-5 sm:p-6">
+    <form action={createPost} className="flex flex-col gap-4 rounded-xl border border-taupe-200 bg-taupe-50 p-5 sm:p-6">
       <div className="flex flex-col gap-1">
         <h2 className="text-lg font-semibold text-stone-900 sm:text-2xl">Create a new post</h2>
         <p className="text-sm text-stone-500">Add a title and a body, then publish it.</p>
@@ -43,6 +63,7 @@ const CreatePostForm = async () => {
           type="text"
           name="title"
           placeholder="Post title"
+          required
           className="rounded-lg border border-stone-300 bg-white px-3 py-2 text-stone-900 outline-none transition focus:border-stone-500 focus:ring-2 focus:ring-stone-200"
         />
       </div>
@@ -52,6 +73,7 @@ const CreatePostForm = async () => {
           id="body"
           name="body"
           placeholder="Write the post..."
+          required
           className="h-40 resize-y rounded-lg border border-stone-300 bg-white px-3 py-2 text-stone-900 outline-none transition focus:border-stone-500 focus:ring-2 focus:ring-stone-200"
         />
       </div>
