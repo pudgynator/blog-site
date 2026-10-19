@@ -1,28 +1,9 @@
 import Link from 'next/link';
 import { Suspense } from 'react'
-import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
 import Loading from '../components/loading'
 import { prisma } from '../../prisma/client'
 import { Post } from '@/types/post';
-
-async function createPost(formData: FormData) {
-  'use server'
-
-  const title = String(formData.get('title') ?? '').trim()
-  const body = String(formData.get('body') ?? '').trim()
-
-  if (!title || !body) {
-    return
-  }
-
-  await prisma.post.create({
-    data: { title, body },
-  })
-
-  revalidatePath('/posts')
-  redirect('/posts')
-}
+import { createPost, deletePost } from '@/actions/actions';
 
 const Posts = async () => {
   const posts = await prisma.post.findMany();
@@ -83,6 +64,14 @@ const CreatePostForm = () => {
       >
         Create post
       </button>
+    </form>
+  )
+}
+
+export const DeletePostForm = ({ id }: { id: number }) => {
+  return (
+    <form action={deletePost.bind(null, id)} className="ml-auto shrink-0">
+      <button className="w-fit rounded-lg bg-red-800 px-4 py-2 text-sm font-medium text-white transition hover:bg-stone-700"  type="submit">Delete post</button>
     </form>
   )
 }

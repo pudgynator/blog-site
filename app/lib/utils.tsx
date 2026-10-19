@@ -3,6 +3,8 @@ import { prisma } from "../../prisma/client";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Post } from "@/types/post";
+import { DeletePostForm } from "../posts/page";
+import { UpdatePostForm } from "../posts/update-post-form";
 
 export async function PostDetails({ params }: { params: Promise<{ id: string }> }) {
     'use cache';
@@ -36,6 +38,10 @@ export async function PostDetails({ params }: { params: Promise<{ id: string }> 
         <p className="whitespace-pre-wrap text-base leading-7 text-stone-600 sm:text-lg sm:leading-8">
           {post.body}
         </p>
+        <div className="flex flex-wrap items-center gap-3 border-t border-stone-200 pt-6">
+          <UpdatePostForm id={post.id} title={post.title} body={post.body} />
+          <DeletePostForm id={post.id} />
+        </div>
       </article>
     )
   }
